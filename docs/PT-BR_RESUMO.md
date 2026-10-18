@@ -1,6 +1,6 @@
 # Resumo em português
 
-Atualizado em 2026-10-18. **Primeira versão, sem release, nada testado dentro do jogo ainda.**
+Atualizado em 2026-10-18. **Primeira versão, sem release, ainda não testada no pack Forbidden.**
 
 O AkashicMixer é o núcleo de som dos mods Akashic (AkashicFM e AkashicWeb dependem dele).
 
@@ -14,4 +14,9 @@ O AkashicMixer é o núcleo de som dos mods Akashic (AkashicFM e AkashicWeb depe
   tocando muda, então volta de onde estava.
 - Configuração em `config/akashicmixer.cfg`.
 
-Verificado: compila (BUILD) e os 17 testes unitários passam (AUTOMATED, Linux). Falta o teste dentro do jogo.
+Verificado:
+- compila (BUILD) e os 17 testes unitários passam (AUTOMATED, Linux);
+- num cliente de desenvolvimento do Minecraft (Linux, sem outros mods): o botão aparece no primeiro espaço livre, abre o mixer, a música do Minecraft some em ~3,5 s sem ser parada e volta depois (AUTOMATED; [`evidence/2026-10-18-dev-client-smoke.md`](evidence/2026-10-18-dev-client-smoke.md));
+- AkashicFM e AkashicWeb compilam com ele e os testes deles passam.
+
+Falta: testar no pack Forbidden (com Hodgepodge, Enhanced Sounds e Refresh Sounds), com rádios e telas de verdade, no Windows.

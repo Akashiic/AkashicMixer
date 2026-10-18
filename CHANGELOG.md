@@ -10,3 +10,5 @@
   - Minecraft background music fades out near audible Akashic sources and back in afterwards (configurable, on by
     default, silent next to a source).
   - `config/akashicmixer.cfg`; English and Brazilian Portuguese translations; JitPack and GitHub Actions builds.
+- Dev client smoke test on Linux (AUTOMATED): button placement, mixer screen and the music fade out and back,
+  `docs/evidence/2026-10-18-dev-client-smoke.md`.
