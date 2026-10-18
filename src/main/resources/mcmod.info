@@ -1,0 +1,18 @@
+{
+	"modListVersion": 2,
+	"modList": [{
+		"modid": "${modId}",
+		"name": "${modName}",
+		"description": "Sound core of the Akashic mods: the Akashic Sounds Mixer (web screens, radios, music) outside Minecraft's sound categories, and Minecraft music fading near Akashic sound sources.",
+		"version": "${modVersion}",
+		"mcversion": "${minecraftVersion}",
+		"url": "https://github.com/Akashiic/AkashicMixer",
+		"updateUrl": "",
+		"authorList": ["Akashiic"],
+		"credits": "Rede Akashic",
+		"logoFile": "",
+		"screenshots": [],
+		"parent": "",
+		"useDependencyInformation": false
+	}]
+}

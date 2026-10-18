@@ -1,0 +1,14 @@
+akashicmixer.gui.open=Akashic Sounds Mixer...
+akashicmixer.gui.title=Akashic Sounds Mixer
+akashicmixer.gui.none=No Akashic mod has registered a channel yet.
+akashicmixer.gui.mute=Mute
+akashicmixer.gui.unmute=Muted
+akashicmixer.gui.muted=Muted
+akashicmixer.gui.silent=Silent
+akashicmixer.gui.duck=Fade Minecraft music near Akashic sounds: %s
+akashicmixer.gui.duckFloor=Minecraft music near Akashic sounds: %s
+akashicmixer.channel.master=Akashic (all)
+akashicmixer.channel.screens=Web Screens
+akashicmixer.channel.radios=Radios
+akashicmixer.channel.music=Music (iPod)
+akashicmixer.channel.voice=Voice

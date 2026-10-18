@@ -1,0 +1,8 @@
+# JitPack builds this repository on demand so AkashicFM and AkashicWeb can depend on it as
+# com.github.Akashiic:AkashicMixer:<commit>:dev (the GTNH buildscript publishes the dev jar with that classifier).
+jdk:
+  - openjdk21
+before_install:
+  - ./gradlew setupCIWorkspace
+install:
+  - ./gradlew publishToMavenLocal -x test

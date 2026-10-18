@@ -1,0 +1,12 @@
+/*
+ * AkashicMixer dependencies. Configurations supported by the GTNH buildscript: api, implementation, compileOnly,
+ * runtimeOnlyNonPublishable, devOnlyNonPublishable, shadowImplementation and test*.
+ *
+ * Runtime: Minecraft 1.7.10 + Forge 10.13.4.1614 and UniMixins (added automatically because usesMixins = true).
+ * Nothing else: the mixer is a small core that AkashicFM and AkashicWeb depend on, so it stays dependency-free.
+ */
+dependencies {
+    testImplementation(platform("org.junit:junit-bom:5.11.4"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
