@@ -1,7 +1,8 @@
 name: Build
 
-# Builds the mod on every push and pull request and publishes the jars as a downloadable artifact
-# (Actions run page -> "Artifacts"). JARs are never committed to the repository.
+# Builds the mod on every push and pull request and publishes every jar and the SHA256SUMS file as its own
+# artifact, NOT zipped (upload-artifact v7, archive: false; delivery protocol in AGENTS.md). Actions run page ->
+# "Artifacts": each entry downloads as the plain .jar / .txt file. JARs are never committed to the repository.
 
 on:
   push:
@@ -40,20 +41,54 @@ jobs:
       - name: Build and test
         run: ./gradlew --no-daemon build
 
-      - name: Name and hash the jars
+      - name: Name and hash the jars (one plain file each, never a zip)
         id: jars
         run: |
-          cd build/libs
-          sha256sum *.jar | tee SHA256SUMS.txt
-          echo "name=akashicmixer-$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
+          sha=$(git rev-parse --short=7 HEAD)
+          mkdir dist
+          for f in build/libs/*.jar; do
+            b=$(basename "$f" .jar)
+            case "$b" in
+              *-dev-preshadow) kind=-dev-preshadow ;;
+              *-dev) kind=-dev ;;
+              *-sources) kind=-sources ;;
+              *) kind= ;;
+            esac
+            cp "$f" "dist/akashicmixer-$sha$kind.jar"
+          done
+          cd dist
+          sha256sum *.jar | tee "SHA256SUMS-$sha.txt"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
 
-      - name: Upload the jars
-        uses: actions/upload-artifact@v4
+      - name: Upload the mod jar (the one players install)
+        uses: actions/upload-artifact@v7
         with:
-          name: ${{ steps.jars.outputs.name }}
-          path: |
-            build/libs/*.jar
-            build/libs/SHA256SUMS.txt
+          path: dist/akashicmixer-${{ steps.jars.outputs.sha }}.jar
+          archive: false
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload the dev jar
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/akashicmixer-${{ steps.jars.outputs.sha }}-dev.jar
+          archive: false
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload the sources jar
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/akashicmixer-${{ steps.jars.outputs.sha }}-sources.jar
+          archive: false
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload the checksums
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/SHA256SUMS-${{ steps.jars.outputs.sha }}.txt
+          archive: false
           if-no-files-found: error
           retention-days: 30
 

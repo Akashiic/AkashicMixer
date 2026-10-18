@@ -54,7 +54,8 @@ Dependency: `com.github.Akashiic:AkashicMixer:<commit>:dev` from JitPack (`https
 ./gradlew build
 ```
 
-Java 8 bytecode (class major 52). See [`docs/PROJECT_STATE.md`](docs/PROJECT_STATE.md) for what has and has not been
+Java 8 bytecode (class major 52). Every push publishes the jars and `SHA256SUMS-<sha>.txt` in GitHub Actions
+(*Build* → *Artifacts*), each as a plain file, not a zip. See [`docs/PROJECT_STATE.md`](docs/PROJECT_STATE.md) for what has and has not been
 verified.
 
 ## License
