@@ -1,8 +1,10 @@
 package com.akashiic.mixer.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -48,5 +50,17 @@ class AkashicMixerApiTest {
     @Test
     void masterIdIsReserved() {
         assertThrows(IllegalArgumentException.class, () -> AkashicMixerApi.register("master", 0));
+    }
+
+    @Test
+    void engineRecoveryIsOffUntilTheClientTurnsItOn() {
+        // A dedicated server, or a client with sound_engine.recoverEngine=false, never sets it.
+        assertFalse(AkashicMixerApi.recoversSoundEngine());
+        try {
+            AkashicMixerApi.setRecoversSoundEngine(true);
+            assertTrue(AkashicMixerApi.recoversSoundEngine());
+        } finally {
+            AkashicMixerApi.setRecoversSoundEngine(false);
+        }
     }
 }

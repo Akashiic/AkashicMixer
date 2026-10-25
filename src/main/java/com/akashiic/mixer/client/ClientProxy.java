@@ -3,6 +3,7 @@ package com.akashiic.mixer.client;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.akashiic.mixer.CommonProxy;
+import com.akashiic.mixer.api.AkashicMixerApi;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -21,6 +22,10 @@ public class ClientProxy extends CommonProxy {
         FMLCommonHandler.instance()
             .bus()
             .register(new MusicDucker());
+        FMLCommonHandler.instance()
+            .bus()
+            .register(new SoundEngineWatchdog(MixerConfig.recoverEngine));
+        AkashicMixerApi.setRecoversSoundEngine(MixerConfig.recoverEngine);
         MinecraftForge.EVENT_BUS.register(new SoundOptionsButton());
     }
 }

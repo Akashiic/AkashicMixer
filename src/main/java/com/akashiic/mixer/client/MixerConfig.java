@@ -10,13 +10,14 @@ import com.akashiic.mixer.api.AkashicMixerApi;
 import com.akashiic.mixer.api.MixerChannel;
 
 /**
- * {@code config/akashicmixer.cfg}: one volume and mute per channel (bound as channels register) and the music ducking
- * settings. Written when the mixer screen closes. Client thread.
+ * {@code config/akashicmixer.cfg}: one volume and mute per channel (bound as channels register), the music ducking
+ * settings and the sound engine recovery switch. Written when the mixer screen closes. Client thread.
  */
 public final class MixerConfig {
 
     static final String CHANNELS = "channels";
     static final String MUSIC = "minecraft_music";
+    static final String ENGINE = "sound_engine";
 
     private static Configuration config;
 
@@ -28,6 +29,8 @@ public final class MixerConfig {
     public static int duckFullAtPercent = 20;
     public static double fadeOutSeconds = 1.5;
     public static double fadeInSeconds = 4.0;
+    /** Restart Minecraft's sound engine by itself after the audio device is lost and comes back. */
+    public static boolean recoverEngine = true;
 
     private MixerConfig() {}
 
@@ -58,6 +61,15 @@ public final class MixerConfig {
             .getDouble();
         fadeInSeconds = config.get(MUSIC, "fadeInSeconds", 4.0, "Seconds to bring the music back.", 0.0, 60.0)
             .getDouble();
+        config.setCategoryComment(
+            ENGINE,
+            "Minecraft's sound engine when the audio device goes away (headphones unplugged, Bluetooth off).");
+        recoverEngine = config.getBoolean(
+            "recoverEngine",
+            ENGINE,
+            true,
+            "Restart the sound engine by itself once a device is back, instead of needing Refresh Sounds. "
+                + "The crash guard for an engine without a device and one-reload-at-a-time are always on.");
         AkashicMixerApi.addListener(MixerConfig::bind);
         if (config.hasChanged()) config.save();
     }

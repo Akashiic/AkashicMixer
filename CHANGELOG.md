@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+- Sound engine and audio device loss (owner report, 2026-10-25: headset off → silence, back on → no sound until
+  Refresh Sounds, freezes and crashes in Dynamic Surroundings' `flushSound`). Evidence:
+  `docs/evidence/2026-10-25-audio-device-loss.md`.
+  - One sound reload at a time: a `reloadSoundSystem` asked for while the last one is still loading is deferred
+    until it is loaded. Two overlapping reloads made the second engine's `AL.create` fail with "Only one OpenAL
+    context" and left a library without a context.
+  - Crash guard: commands queued for an OpenAL library without a usable context are dropped instead of run
+    (`UnsatisfiedLinkError` in `alListenerf`, `NullPointerException` in `setListenerPosition`).
+  - Recovery (`sound_engine.recoverEngine`, on by default): the engine restarts by itself (engine only, not the sound
+    registry) when it has no device, fell back to silent mode, or its device reports disconnected; so the sound comes
+    back within about 10 s of the device returning.
+  - API: `AkashicMixerApi.recoversSoundEngine()` (additive, API version stays 1).
+
 - First version (owner request, 2026-10-18): the Akashic Sounds Mixer.
   - Channel API (`AkashicMixerApi`, version 1): master slider, per-channel volume and mute, well-known ids
     `screens`, `radios`, `music`, `voice`.
