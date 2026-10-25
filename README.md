@@ -26,6 +26,8 @@ depend on it.
   longer leaves Minecraft silent until *Refresh Sounds*, and no longer crashes it: overlapping sound reloads from
   several mods are run one at a time, commands for an engine without a device are dropped instead of crashing, and
   the engine restarts by itself (engine only, no resource reload) within about 10 s of the device coming back.
+- **Sound follows Windows' default output.** Turning a headset on while the speakers play (or back) moves every
+  Minecraft sound to the new default device within a few seconds; background music that was playing resumes.
 
 Settings live in `config/akashicmixer.cfg` (written when the mixer screen closes).
 
@@ -43,6 +45,7 @@ AkashicMixerApi.reportAudible("mymod", loudestGain);
 
 // Lost your OpenAL output? If this is true, wait for the mixer to restart Minecraft's engine; do not reload it.
 boolean mixerRecovers = AkashicMixerApi.recoversSoundEngine();
+boolean mixerFollowsDefault = AkashicMixerApi.followsDefaultDevice(); // same for a Windows default-device change
 ```
 
 Dependency: `com.github.Akashiic:AkashicMixer:<commit>:dev` from JitPack (`https://jitpack.io`).
@@ -54,7 +57,7 @@ Dependency: `com.github.Akashiic:AkashicMixer:<commit>:dev` from JitPack (`https
 | Channel registry and levels (pure Java, safe on a dedicated server) | `api/AkashicMixerApi`, `api/MixerChannel` |
 | Fade curve, report freshness, button placement (pure, unit-tested) | `core/` |
 | Music fade: a factor applied to category *Music* in `SoundManager.getNormalizedVolume` (one `@Inject` at RETURN, client only), re-applied through `SoundHandler.setSoundLevel` | `mixins/client/MixinSoundManager`, `client/MusicDucker` |
-| One reload at a time (`@Inject` at HEAD of `SoundManager.reloadSoundSystem`), crash guard (`@Inject` at HEAD of paulscode `SoundSystem.CommandQueue`), engine watchdog | `mixins/client/MixinSoundManager`, `mixins/client/MixinSoundSystem`, `client/SoundEngineWatchdog`, `client/OpenAlEngine`, `core/ReloadGate`, `core/EngineRecovery` |
+| One reload at a time (`@Inject` at HEAD of `SoundManager.reloadSoundSystem`), crash guard (`@Inject` at HEAD of paulscode `SoundSystem.CommandQueue`), engine watchdog, default-device following, music resume | `mixins/client/MixinSoundManager`, `mixins/client/MixinSoundSystem`, `client/SoundEngineWatchdog`, `client/OpenAlEngine`, `client/MusicResume`, `core/ReloadGate`, `core/EngineRecovery`, `core/DefaultDeviceFollower` |
 | Options button, mixer screen, config | `client/` |
 
 ## Build

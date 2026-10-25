@@ -32,6 +32,7 @@ public final class AkashicMixerApi {
     private static final List<Listener> LISTENERS = new CopyOnWriteArrayList<>();
     private static final AudibleBoard AUDIBLE = new AudibleBoard();
     private static volatile boolean recoversSoundEngine;
+    private static volatile boolean followsDefaultDevice;
 
     private AkashicMixerApi() {}
 
@@ -100,6 +101,20 @@ public final class AkashicMixerApi {
     /** Mixer internals. */
     public static void setRecoversSoundEngine(boolean value) {
         recoversSoundEngine = value;
+    }
+
+    /**
+     * True on a client where the mixer also moves Minecraft's sound engine to Windows' new default output device when
+     * it changes (config {@code sound_engine.followDefaultDevice}). A mod that would reload the sound system on a
+     * default-device change should then wait for the mixer's restart instead.
+     */
+    public static boolean followsDefaultDevice() {
+        return followsDefaultDevice;
+    }
+
+    /** Mixer internals. */
+    public static void setFollowsDefaultDevice(boolean value) {
+        followsDefaultDevice = value;
     }
 
     /** Mixer internals: told about each new channel (config binding). */

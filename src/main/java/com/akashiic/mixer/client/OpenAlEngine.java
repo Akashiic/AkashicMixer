@@ -8,6 +8,7 @@ import net.minecraft.client.audio.SoundManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC10;
+import org.lwjgl.openal.ALC11;
 import org.lwjgl.openal.ALCdevice;
 
 import com.akashiic.mixer.AkashicMixer;
@@ -106,6 +107,36 @@ public final class OpenAlEngine {
             if (systemField == null) throw new NoSuchFieldException("SoundManager has no SoundSystem field");
         }
         return (SoundSystem) systemField.get(manager);
+    }
+
+    /**
+     * {Windows' default output, the device the engine plays on} as OpenAL names them, or null when it cannot tell.
+     * OpenAL Soft 1.15 (LWJGL 2.9.1) lists the default endpoint first, opens it for a null device name, and caches
+     * the list until {@code ALC_ALL_DEVICES_SPECIFIER} is asked for without a device; its
+     * {@code ALC_DEFAULT_DEVICE_SPECIFIER} is the constant "OpenAL Soft", useless here. Client thread, under
+     * {@code THREAD_SYNC}: Minecraft destroys the context on this thread or under that lock, so the library cannot be
+     * unloaded during the call.
+     */
+    static String[] devices() {
+        synchronized (SoundSystemConfig.THREAD_SYNC) {
+            if (!AL.isCreated()) return null;
+            try {
+                ALCdevice device = AL.getDevice();
+                if (device == null || !ALC10.alcIsExtensionPresent(device, "ALC_ENUMERATE_ALL_EXT")) return null;
+                String engine = ALC10.alcGetString(device, ALC11.ALC_ALL_DEVICES_SPECIFIER);
+                ALC10.alcGetString(null, ALC11.ALC_ALL_DEVICES_SPECIFIER); // re-enumerate
+                String current = ALC10.alcGetString(null, ALC11.ALC_DEFAULT_ALL_DEVICES_SPECIFIER);
+                return new String[] { clean(current), clean(engine) };
+            } catch (LinkageError | RuntimeException e) {
+                return null;
+            }
+        }
+    }
+
+    private static String clean(String name) {
+        if (name == null) return null;
+        int end = name.indexOf('\0');
+        return (end >= 0 ? name.substring(0, end) : name).trim();
     }
 
     /** {@code ALC_CONNECTED} of the current device; true when the driver cannot tell (no ALC_EXT_disconnect). */

@@ -31,6 +31,8 @@ public final class MixerConfig {
     public static double fadeInSeconds = 4.0;
     /** Restart Minecraft's sound engine by itself after the audio device is lost and comes back. */
     public static boolean recoverEngine = true;
+    /** Move Minecraft's sound to Windows' new default output device when it changes. */
+    public static boolean followDefaultDevice = true;
 
     private MixerConfig() {}
 
@@ -70,6 +72,12 @@ public final class MixerConfig {
             true,
             "Restart the sound engine by itself once a device is back, instead of needing Refresh Sounds. "
                 + "The crash guard for an engine without a device and one-reload-at-a-time are always on.");
+        followDefaultDevice = config.getBoolean(
+            "followDefaultDevice",
+            ENGINE,
+            true,
+            "When Windows switches its default output (headset turned on while speakers play, or back), restart "
+                + "the sound engine on the new device so every Minecraft sound plays there. Needs recoverEngine.");
         AkashicMixerApi.addListener(MixerConfig::bind);
         if (config.hasChanged()) config.save();
     }

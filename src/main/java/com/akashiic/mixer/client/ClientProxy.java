@@ -24,8 +24,9 @@ public class ClientProxy extends CommonProxy {
             .register(new MusicDucker());
         FMLCommonHandler.instance()
             .bus()
-            .register(new SoundEngineWatchdog(MixerConfig.recoverEngine));
+            .register(new SoundEngineWatchdog(MixerConfig.recoverEngine, MixerConfig.followDefaultDevice));
         AkashicMixerApi.setRecoversSoundEngine(MixerConfig.recoverEngine);
+        AkashicMixerApi.setFollowsDefaultDevice(MixerConfig.recoverEngine && MixerConfig.followDefaultDevice);
         MinecraftForge.EVENT_BUS.register(new SoundOptionsButton());
     }
 }

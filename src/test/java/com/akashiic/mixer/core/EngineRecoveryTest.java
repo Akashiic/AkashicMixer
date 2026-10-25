@@ -86,4 +86,25 @@ class EngineRecoveryTest {
         assertFalse(r.update(Health.DEAD, 4 * S)); // 2 s after the first restart
         assertTrue(r.update(Health.DEAD, 5 * S));
     }
+
+    @Test
+    void aNewWindowsDefaultRestartsOnceAfterItsGrace() {
+        EngineRecovery r = new EngineRecovery();
+        assertFalse(r.update(Health.DEFAULT_CHANGED, 0));
+        assertFalse(r.update(Health.DEFAULT_CHANGED, 2 * S)); // confirmed by the next device check
+        assertTrue(r.update(Health.DEFAULT_CHANGED, 3 * S)); // 2.5 s grace passed
+        assertFalse(r.update(Health.LOADING, 3 * S + S / 10));
+        assertFalse(r.update(Health.HEALTHY, 4 * S)); // the new engine is on the new default
+        assertFalse(r.failing());
+    }
+
+    @Test
+    void aDefaultThatFlipsBackWithinTheGraceDoesNothing() {
+        EngineRecovery r = new EngineRecovery();
+        assertFalse(r.update(Health.DEFAULT_CHANGED, 0));
+        assertFalse(r.update(Health.HEALTHY, S));
+        assertFalse(r.update(Health.DEFAULT_CHANGED, 2 * S)); // grace starts again
+        assertFalse(r.update(Health.DEFAULT_CHANGED, 4 * S));
+        assertTrue(r.update(Health.DEFAULT_CHANGED, 5 * S));
+    }
 }

@@ -56,11 +56,15 @@ class AkashicMixerApiTest {
     void engineRecoveryIsOffUntilTheClientTurnsItOn() {
         // A dedicated server, or a client with sound_engine.recoverEngine=false, never sets it.
         assertFalse(AkashicMixerApi.recoversSoundEngine());
+        assertFalse(AkashicMixerApi.followsDefaultDevice());
         try {
             AkashicMixerApi.setRecoversSoundEngine(true);
+            AkashicMixerApi.setFollowsDefaultDevice(true);
             assertTrue(AkashicMixerApi.recoversSoundEngine());
+            assertTrue(AkashicMixerApi.followsDefaultDevice());
         } finally {
             AkashicMixerApi.setRecoversSoundEngine(false);
+            AkashicMixerApi.setFollowsDefaultDevice(false);
         }
     }
 }

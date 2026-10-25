@@ -20,6 +20,10 @@ O AkashicMixer é o núcleo de som dos mods Akashic (AkashicFM e AkashicWeb depe
   travar o jogo; e o motor de som reinicia sozinho (só o motor, sem recarregar todos os sons, então sem congelar)
   em até ~10 s depois que o dispositivo volta, sem precisar de Refresh Sounds. Opção
   `sound_engine.recoverEngine` (ligada).
+- **O som segue o dispositivo padrão do Windows.** Se o Windows trocar a saída padrão (ligar o fone com a caixa
+  tocando, ou o contrário), o Mixer reinicia o motor de som no dispositivo novo em poucos segundos, e todos os sons do
+  Minecraft passam a sair por ele. A música de fundo que estava tocando volta em ~5 s (sem isso o Minecraft esperaria
+  10-20 minutos). Opção `sound_engine.followDefaultDevice` (ligada).
 - Configuração em `config/akashicmixer.cfg`.
 
 Verificado:
@@ -30,6 +34,10 @@ Verificado:
   configuração do OpenAL Soft): dois recarregamentos no mesmo tick não colidem mais, os comandos de um motor sem
   dispositivo não geram mais erro, e o som volta sozinho depois que o dispositivo volta (AUTOMATED;
   [`evidence/2026-10-25-audio-device-loss.md`](evidence/2026-10-25-audio-device-loss.md)). Os testes unitários agora
-  são 30.
+  são 38;
+- seguir o dispositivo padrão: em 30 s de jogo normal nenhum reinício (cada verificação leva menos de 1 ms); uma
+  troca de padrão simulada reinicia uma vez, assenta no dispositivo novo e a música volta (AUTOMATED, Linux; a troca
+  foi simulada porque o cliente de teste só tem um dispositivo;
+  [`evidence/2026-10-25-follow-default-device.md`](evidence/2026-10-25-follow-default-device.md)).
 
-Falta: testar no pack Forbidden (com Hodgepodge, Enhanced Sounds e Refresh Sounds), com rádios e telas de verdade, no Windows; e tirar/recolocar o fone de verdade no Windows com o pack completo (Dynamic Surroundings, ArchaicFix, Akashic Voice).
+Falta: testar no pack Forbidden (com Hodgepodge, Enhanced Sounds e Refresh Sounds), com rádios e telas de verdade, no Windows; e tirar/recolocar o fone de verdade no Windows com o pack completo (Dynamic Surroundings, ArchaicFix, Akashic Voice), incluindo a troca de dispositivo padrão.

@@ -14,6 +14,10 @@
     registry) when it has no device, fell back to silent mode, or its device reports disconnected; so the sound comes
     back within about 10 s of the device returning.
   - API: `AkashicMixerApi.recoversSoundEngine()` (additive, API version stays 1).
+- Follow Windows' default output device (owner request, 2026-10-25; `sound_engine.followDefaultDevice`, on): when
+  Windows switches its default output, the engine restarts on the new device, so every Minecraft sound plays there;
+  background music that was playing comes back within 5 s instead of after vanilla's 10-20 minute pause. API:
+  `AkashicMixerApi.followsDefaultDevice()` (additive). Evidence: `docs/evidence/2026-10-25-follow-default-device.md`.
 
 - First version (owner request, 2026-10-18): the Akashic Sounds Mixer.
   - Channel API (`AkashicMixerApi`, version 1): master slider, per-channel volume and mute, well-known ids
