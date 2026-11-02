@@ -10,10 +10,12 @@ import net.minecraft.util.EnumChatFormatting;
 
 import com.akashiic.mixer.api.AkashicMixerApi;
 import com.akashiic.mixer.api.MixerChannel;
+import com.akashiic.mixer.core.MixerLayout;
 
 /**
  * The Akashic Sounds Mixer: the Akashic master slider, one slider and mute button per registered channel, and the
- * Minecraft music settings. Laid out like vanilla's Music and Sounds screen. Saves on close.
+ * Minecraft music settings. Laid out like vanilla's Music and Sounds screen, tighter or in two columns when the
+ * channels do not fit ({@link MixerLayout}). Saves on close.
  */
 public final class GuiAkashicMixer extends GuiScreen {
 
@@ -35,26 +37,31 @@ public final class GuiAkashicMixer extends GuiScreen {
         rows.clear();
         rows.add(AkashicMixerApi.master());
         rows.addAll(AkashicMixerApi.channels());
-        int left = width / 2 - 155;
-        int y = height / 6 - 12;
+        MixerLayout layout = MixerLayout.of(rows.size(), width, height);
         for (int i = 0; i < rows.size(); i++) {
             final MixerChannel ch = rows.get(i);
-            buttonList.add(new MixerSlider(MUTE_BASE + 1000 + i, left, y, 250, ch.volumePercent(), percent -> {
-                ch.setVolumePercent(percent);
-                return label(ch);
-            }));
-            buttonList.add(new GuiButton(MUTE_BASE + i, left + 255, y, 55, 20, muteLabel(ch)));
-            y += 24;
+            int x = layout.rowX(i), y = layout.rowY(i);
+            buttonList
+                .add(new MixerSlider(MUTE_BASE + 1000 + i, x, y, layout.sliderWidth, ch.volumePercent(), percent -> {
+                    ch.setVolumePercent(percent);
+                    return label(ch);
+                }));
+            buttonList
+                .add(new GuiButton(MUTE_BASE + i, x + layout.sliderWidth + 5, y, layout.muteWidth, 20, muteLabel(ch)));
         }
-        y += 6;
-        buttonList.add(new GuiButton(DUCK, left, y, 310, 20, duckLabel()));
-        y += 24;
-        buttonList.add(new MixerSlider(2, left, y, 310, MixerConfig.duckFloorPercent, percent -> {
-            MixerConfig.duckFloorPercent = percent;
-            return floorLabel();
-        }));
-        buttonList
-            .add(new GuiButton(DONE, width / 2 - 100, Math.max(y + 30, height / 6 + 168), I18n.format("gui.done")));
+        buttonList.add(new GuiButton(DUCK, layout.left, layout.duckY, MixerLayout.CONTENT_WIDTH, 20, duckLabel()));
+        buttonList.add(
+            new MixerSlider(
+                2,
+                layout.left,
+                layout.floorY,
+                MixerLayout.CONTENT_WIDTH,
+                MixerConfig.duckFloorPercent,
+                percent -> {
+                    MixerConfig.duckFloorPercent = percent;
+                    return floorLabel();
+                }));
+        buttonList.add(new GuiButton(DONE, width / 2 - 100, layout.doneY, I18n.format("gui.done")));
     }
 
     @Override

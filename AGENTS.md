@@ -7,8 +7,10 @@ Scope: this repository. Changes needed in AkashicFM or AkashicWeb are made in th
 - The `api` and `core` packages are pure Java: no Minecraft client classes, safe to load on a dedicated server, unit
   tested headless. Only `client` and `mixins.client` touch the client.
 - Mixins only where Forge has no hook, each narrow, namespaced (`akashicmixer$`) and documented with the reason.
-  Today: one `@Inject` at RETURN of `SoundManager.getNormalizedVolume`, category *Music* only.
-- Never touch vanilla categories other than *Music*; never stop a vanilla sound (keep the factor above 0).
+  Today: one `@Inject` at RETURN of `SoundManager.getNormalizedVolume`: the music fade (category *Music* only) and
+  the sounds an Akashic mod routed to a channel (`AkashicMixerApi.routeSounds`, by sound event id).
+- Never touch vanilla categories other than *Music*; never stop a vanilla sound (keep the factor above 0). Sound
+  routing only ever applies to an Akashic mod's own `sounds.json` events; the `minecraft` domain cannot be routed.
 - Keep the API backward compatible; bump `AkashicMixerApi.API_VERSION` on an incompatible change and update the
   consumers in the same series.
 - Evidence grades: AUTHORED, STATIC, BUILD, AUTOMATED, LIVE-OBSERVED, LIVE-APPROVED. State the OS for AUTOMATED

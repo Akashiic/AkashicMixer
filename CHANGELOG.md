@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- Sound routing (owner request, 2026-11-02): `AkashicMixerApi.routeSounds(domain, pathPrefix, channel)` hands an
+  Akashic mod's own `sounds.json` events to a mixer channel; the mixin applies the channel level in place of the
+  Minecraft category slider and leaves them out of the music fade. `minecraft:` sounds cannot be routed. API version
+  stays 1 (additive).
+- Well-known channels `menu_music` (**Menu Music**) and `menu_sfx` (**Menu Sounds**) for the Akashic Cinematic Menu,
+  with English and Brazilian Portuguese names.
+- The mixer screen gets tighter rows, then two columns, when the channels do not fit (6 rows overflowed 1280x720 at
+  the automatic GUI scale, 427x240).
+- Dev client smoke test of the routing and the six-row screen on Linux (AUTOMATED),
+  `docs/evidence/2026-11-02-sound-routing-smoke.md`.
+
 - First version (owner request, 2026-10-18): the Akashic Sounds Mixer.
   - Channel API (`AkashicMixerApi`, version 1): master slider, per-channel volume and mute, well-known ids
     `screens`, `radios`, `music`, `voice`.
