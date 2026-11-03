@@ -7,7 +7,12 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [],
   "client": [
-    "client.MixinSoundManager"
+    "client.AccessorLibraryLWJGLOpenAL",
+    "client.AccessorSoundHandler",
+    "client.AccessorSoundManager",
+    "client.AccessorSoundSystem",
+    "client.MixinSoundManager",
+    "client.MixinSoundSystem"
   ],
   "server": []
 }
