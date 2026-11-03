@@ -19,6 +19,8 @@ Last update: 2026-11-03. Status: **first version, not released, not observed in 
 | Vanilla 1.7.10 behaviour routing relies on: tickable sounds re-read `getNormalizedVolume` every tick; `setSoundCategoryVolume` stops a sound only when that value is 0; `playSound` skips a sound computed at 0 | STATIC | decompiled `SoundManager` (MCP stable 12) |
 | In a dev client: routed sounds play at the channel level with Minecraft's Music slider at 0, follow the channel and Akashic (all) live, survive the Music slider being re-applied, go silent when muted; an unrouted control stays under the vanilla slider; six rows fit the mixer screen at 427x240 | AUTOMATED (Linux dev client, Xvfb, Java 8, OpenAL null backend) | [`evidence/2026-11-02-sound-routing-smoke.md`](evidence/2026-11-02-sound-routing-smoke.md) |
 | The real Akashic Cinematic Menu (0.7.0-alpha.5) with the mixer, on Windows, in the pack | **not observed** | its OI-17 |
+| Why sounds are left behind in 1.7.10 and what current Minecraft (26.3) does instead: one-shot sounds are fixed points in both; entity-bound sounds (`EntityBoundSoundInstance`, `ClientboundSoundEntityPacket`) follow their entity | STATIC | [`research/2026-11-03-sounds-left-behind.md`](research/2026-11-03-sounds-left-behind.md) |
+| Entity sounds: a server sound of a moving pig, of the flying player (22 blocks/s) and the player's own client sound stay on the entity (0.00 block at every frame with `smoothEveryFrame`); a sound next to an entity stays vanilla; a dying entity's sound finishes where it died; without the hello the server sends vanilla; `SoundAnchor` unit-tested (5 tests; 54 in total) | AUTOMATED (Linux dev client, integrated server, Java 8, OpenAL null backend) | [`evidence/2026-11-03-entity-sounds-smoke.md`](evidence/2026-11-03-entity-sounds-smoke.md) |
 | Next to other mods' buttons (Enhanced Sounds, Refresh Sounds), with Hodgepodge, with real AkashicFM/AkashicWeb sources, on Windows | **not observed** | needs an in-game test in the Forbidden pack |
 
 ## Open points
@@ -34,6 +36,6 @@ Last update: 2026-11-03. Status: **first version, not released, not observed in 
 - A real Windows default-device switch (and how long device enumeration takes with Bluetooth devices) is not
   observed; the dev client has a single device.
 - Cinematic Menu routing (2026-11-02): in-game check with AkashicCinematicMenu 0.7.0-alpha.5 (its OI-17).
-- Sounds left behind when flying fast (owner question, 2026-11-03): studied, not built. Current Minecraft also keeps
-  one-shot sounds at their start point; the options and open questions are in
-  [`research/2026-11-03-sounds-left-behind.md`](research/2026-11-03-sounds-left-behind.md).
+- Entity sounds (2026-11-03): in-game check on a dedicated server with real ping, on Windows, in the Forbidden pack
+  (Hodgepodge, Dynamic Surroundings and Sound Physics also touch sounds), with many mobs (cost of the per-frame
+  position commands).

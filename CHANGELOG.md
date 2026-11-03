@@ -40,7 +40,8 @@
     the entity was;
   - the local player's own client sounds (`EntityPlayerSP.playSound`) stay on the player.
   Config `entity_sounds` (`enabled`, `matchByPosition`, `smoothEveryFrame`), read by both sides. Research:
-  `docs/research/2026-11-03-sounds-left-behind.md`.
+  `docs/research/2026-11-03-sounds-left-behind.md`; dev client check (AUTOMATED, Linux):
+  `docs/evidence/2026-11-03-entity-sounds-smoke.md`.
 - One branch again (owner report, 2026-11-03): the Cinematic Menu build (`0ff47b7`) had been cut from `c60f79e`, so
   its jar lacked the audio device fixes of `08b49cd` and `c69316d`. Both series merged; the routing and the reload
   gate share `MixinSoundManager`.

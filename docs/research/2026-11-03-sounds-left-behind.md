@@ -91,5 +91,8 @@ sounds that matter while flying are most likely modded and server-sent, which ne
 3. **Per-mod fixes**: a looping modded sound (jetpack, machine on a vehicle) that is re-sent as one-shots from the
    server can only be fixed per mod; find which mods do this in the pack first.
 
-Open questions before building: which sounds the owner hears left behind (own actions, jetpack, mobs, other
-players), and whether the mixer is installed on the Forbidden server.
+**Built (2026-11-03), owner's choice "the sound stays on the entity, as in recent versions":** option 2 for every
+sound that belongs to an entity, plus the local player's own client sounds and per-frame placement. Option 1's
+heuristic was not needed for the player's own server sounds, since the server knows they belong to the player. Option
+3 remains for mods that send sounds through their own packets. Evidence:
+[`../evidence/2026-11-03-entity-sounds-smoke.md`](../evidence/2026-11-03-entity-sounds-smoke.md).

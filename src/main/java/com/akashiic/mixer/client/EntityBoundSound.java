@@ -38,6 +38,11 @@ final class EntityBoundSound extends MovingSound {
         return !left;
     }
 
+    /** True when the entity moved during the last tick (its drawn position changes between frames). */
+    boolean moving() {
+        return entity.prevPosX != entity.posX || entity.prevPosY != entity.posY || entity.prevPosZ != entity.posZ;
+    }
+
     /** Moves the sound to the entity as drawn {@code partialTicks} into the current tick. */
     void place(float partialTicks) {
         xPosF = (float) x(partialTicks);

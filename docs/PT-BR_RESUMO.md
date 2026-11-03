@@ -29,10 +29,16 @@ O AkashicMixer é o núcleo de som dos mods Akashic (AkashicFM e AkashicWeb depe
   **Master** continua valendo). Funciona por uma API nova, `routeSounds`: um mod Akashic entrega os sons do próprio
   `sounds.json` a um canal; sons `minecraft:` nunca podem ser roteados. A tela do Mixer se ajusta (linhas mais
   justas ou duas colunas) para caber em 1280x720.
+- **O som fica na entidade** (03/11/2026). No 1.7.10 o servidor manda todo som como um ponto fixo: onde o mob, o
+  veículo ou o jogador estava quando tocou. Voando rápido, os sons do que você faz (arco, comer, itens, ferramentas de
+  mods) nascem atrás e ficam lá; o som de um mob correndo fica onde ele começou. Agora, com o Mixer no servidor e no
+  cliente, um som que pertence a uma entidade vai como "som na entidade N" e o cliente o mantém preso nela, como fazem
+  os sons presos a entidades no Minecraft atual, e o move a cada frame. Os seus próprios sons do cliente também ficam
+  em você. Quem não tem o Mixer (jogador ou servidor) continua com o som vanilla. Opções em `entity_sounds`.
 - Configuração em `config/akashicmixer.cfg`.
 
 Verificado:
-- compila (BUILD) e os 49 testes unitários passam (AUTOMATED, Linux);
+- compila (BUILD) e os 54 testes unitários passam (AUTOMATED, Linux);
 - num cliente de desenvolvimento do Minecraft (Linux, sem outros mods): o botão aparece no primeiro espaço livre, abre o mixer, a música do Minecraft some em ~3,5 s sem ser parada e volta depois (AUTOMATED; [`evidence/2026-10-18-dev-client-smoke.md`](evidence/2026-10-18-dev-client-smoke.md));
 - AkashicFM e AkashicWeb compilam com ele e os testes deles passam;
 - perda de dispositivo de áudio, num cliente de desenvolvimento (Linux, dispositivo desligado e religado pela
@@ -44,13 +50,12 @@ Verificado:
   troca de padrão simulada reinicia uma vez, assenta no dispositivo novo e a música volta (AUTOMATED, Linux; a troca
   foi simulada porque o cliente de teste só tem um dispositivo;
   [`evidence/2026-10-25-follow-default-device.md`](evidence/2026-10-25-follow-default-device.md));
+- som na entidade num cliente de desenvolvimento (03/11): som de um porco andando, do jogador voando a 22 blocos/s e
+  o som do próprio jogador ficam presos neles (0,00 bloco em todo frame); um som ao lado de uma entidade continua
+  vanilla; o som de uma entidade que morre termina onde ela morreu; sem o "hello" o servidor manda vanilla (AUTOMATED;
+  [`evidence/2026-11-03-entity-sounds-smoke.md`](evidence/2026-11-03-entity-sounds-smoke.md));
 - roteamento num cliente de desenvolvimento (02/11): com a Música do Minecraft em 0 os sons roteados tocam no volume
   do canal, mudam ao vivo, ficam mudos ao mutar, e a tela do Mixer com 6 canais cabe em 1280x720 (AUTOMATED;
   [`evidence/2026-11-02-sound-routing-smoke.md`](evidence/2026-11-02-sound-routing-smoke.md)).
 
-Falta: ver no jogo o Menu Cinematic de verdade (0.7.0-alpha.5) com o Mixer; testar no pack Forbidden (com Hodgepodge, Enhanced Sounds e Refresh Sounds), com rádios e telas de verdade, no Windows; e tirar/recolocar o fone de verdade no Windows com o pack completo (Dynamic Surroundings, ArchaicFix, Akashic Voice), incluindo a troca de dispositivo padrão.
-
-Em estudo (03/11): o som que "fica para trás" quando se voa rápido. O Minecraft atual também deixa a maioria dos sons
-no ponto onde começaram; o que mudou é mais estreito (alguns sons do próprio jogador tocam na hora no cliente, alguns
-sons seguem a entidade). Opções e perguntas em
-[`research/2026-11-03-sounds-left-behind.md`](research/2026-11-03-sounds-left-behind.md). Nada foi implementado ainda.
+Falta: ver no jogo o Menu Cinematic de verdade (0.7.0-alpha.5) com o Mixer; testar no pack Forbidden (com Hodgepodge, Enhanced Sounds e Refresh Sounds), com rádios e telas de verdade, no Windows; e tirar/recolocar o fone de verdade no Windows com o pack completo (Dynamic Surroundings, ArchaicFix, Akashic Voice), incluindo a troca de dispositivo padrão; e o som na entidade num servidor dedicado com ping de verdade, no Windows, no pack (Hodgepodge, Dynamic Surroundings, Sound Physics) e com muitos mobs.

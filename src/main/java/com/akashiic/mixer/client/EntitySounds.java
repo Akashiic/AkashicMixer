@@ -114,6 +114,8 @@ public final class EntitySounds {
                 it.remove();
                 continue;
             }
+            // Standing still: the tick already put it there; skip the command.
+            if (!sound.moving()) continue;
             system.setPosition(
                 channel,
                 (float) sound.x(partialTicks),
