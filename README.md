@@ -35,13 +35,17 @@ depend on it.
 - **Sound follows Windows' default output.** Turning a headset on while the speakers play (or back) moves every
   Minecraft sound to the new default device within a few seconds; background music that was playing resumes.
 
-- **Sounds stay on their entity.** In vanilla 1.7.10 the server sends every sound as a fixed point: where the mob,
-  vehicle or player was when it played. Flying fast, your own sounds (bow, eating, items, modded tools) start behind
-  you and stay there; a running mob's sounds stay where it started. With the mixer on the server and on the client,
-  a sound that belongs to an entity (vanilla's `playSoundAtEntity`, or a mod's sound played exactly at an entity) is
-  sent as "sound at entity N" and the client keeps it on the entity, as current Minecraft does with its entity-bound
-  sounds, and moves it every frame. The local player's own client sounds stay on the player too. Players without
-  the mixer, and servers without it, keep vanilla sounds. Config `entity_sounds`.
+- **Sounds stay on their entity.** In vanilla 1.7.10 every sound is a fixed point: where the mob, vehicle or player
+  was when it played. Flying fast, your own sounds (bow, eating, items, modded tools) start behind you and stay
+  there; a running mob's sounds stay where it started. With the mixer on the server and on the client, a sound that
+  belongs to an entity (vanilla's `playSoundAtEntity`, a sound played exactly at an entity by a mod or a Bukkit
+  plugin, `/playsound` and `Player.playSound` at the player) reaches the client as "sound at entity N", and the
+  client keeps it on the entity, as current Minecraft does with its entity-bound sounds, moving it every frame.
+  Sounds the client plays itself exactly at an entity (your own steps, the dragon's wings) stay on it too. Players
+  and servers without the mixer keep vanilla sounds. Config `entity_sounds`.
+- **`/playsound` without coordinates plays at the player.** Vanilla's (and Bukkit's, on Crucible) uses the corner
+  (or centre) of the player's block, so the sound came from up to 1.4 blocks to the side. With the mixer on the
+  server it plays at the player, for every client; with the mixer on the client too it also follows the player.
 
 Settings live in `config/akashicmixer.cfg` (written when the mixer screen closes).
 
@@ -88,7 +92,7 @@ Dependency: `com.github.Akashiic:AkashicMixer:<commit>:dev` from JitPack (`https
 | One reload at a time (`@Inject` at HEAD of `SoundManager.reloadSoundSystem`), crash guard (`@Inject` at HEAD of paulscode `SoundSystem.CommandQueue`), engine watchdog, default-device following, music resume | `mixins/client/MixinSoundManager`, `mixins/client/MixinSoundSystem`, `client/SoundEngineWatchdog`, `client/OpenAlEngine`, `client/MusicResume`, `core/ReloadGate`, `core/EngineRecovery`, `core/DefaultDeviceFollower` |
 | Sound routing: route table (pure) and, in the same `@Inject`, the channel level in place of the category slider for routed sounds | `core/SoundRoutes`, `mixins/client/MixinSoundManager` |
 | Mixer screen layout: vanilla-like, tighter or two columns so every channel fits a 427x240 screen (pure, unit-tested) | `core/MixerLayout`, `client/GuiAkashicMixer` |
-| Entity sounds: server side, the entity of `playSoundAtEntity` and the replacement of `WorldManager`'s send (bound packet for mixer clients, vanilla packet for others); client side, the bound sound, per-frame placement and hello | `mixins/common/MixinWorld`, `mixins/common/MixinWorldManager`, `server/EntitySoundServer`, `net/`, `client/EntitySounds`, `client/EntityBoundSound`, `mixins/client/MixinEntityPlayerSP`, `core/SoundAnchor` |
+| Entity sounds: server side, whose sound a world is sending (`World.playSound*`) and the final per-player send of each sound packet (bound packet for mixer clients, vanilla or `/playsound`-fixed packet for others); client side, the bound sound, client sounds at an entity, per-frame placement and hello | `mixins/common/MixinWorld`, `mixins/common/MixinNetHandlerPlayServer`, `server/EntitySoundServer`, `net/`, `client/EntitySounds`, `client/EntityBoundSound`, `mixins/client/MixinWorldClient`, `core/SoundAnchor` |
 | Options button, mixer screen, config | `client/` |
 
 ## Build

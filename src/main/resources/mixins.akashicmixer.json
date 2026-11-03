@@ -6,17 +6,18 @@
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "common.MixinWorld",
-    "common.MixinWorldManager"
+    "common.AccessorS29PacketSoundEffect",
+    "common.MixinNetHandlerPlayServer",
+    "common.MixinWorld"
   ],
   "client": [
     "client.AccessorLibraryLWJGLOpenAL",
     "client.AccessorSoundHandler",
     "client.AccessorSoundManager",
     "client.AccessorSoundSystem",
-    "client.MixinEntityPlayerSP",
     "client.MixinSoundManager",
-    "client.MixinSoundSystem"
+    "client.MixinSoundSystem",
+    "client.MixinWorldClient"
   ],
   "server": []
 }

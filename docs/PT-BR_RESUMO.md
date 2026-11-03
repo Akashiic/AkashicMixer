@@ -35,6 +35,12 @@ O AkashicMixer é o núcleo de som dos mods Akashic (AkashicFM e AkashicWeb depe
   cliente, um som que pertence a uma entidade vai como "som na entidade N" e o cliente o mantém preso nela, como fazem
   os sons presos a entidades no Minecraft atual, e o move a cada frame. Os seus próprios sons do cliente também ficam
   em você. Quem não tem o Mixer (jogador ou servidor) continua com o som vanilla. Opções em `entity_sounds`.
+- **`/playsound` sem coordenadas toca no jogador** (03/11). O vanilla (e o do Bukkit, no Crucible) usava o canto (ou
+  o centro) do bloco do jogador, então o som vinha de até 1,4 bloco para o lado. Com o Mixer no servidor ele toca no
+  jogador para todo mundo; com o Mixer também no cliente, ele fica preso no jogador. Também ficam presos os sons de
+  plugins tocados no jogador (`Player.playSound`) ou numa entidade (`World.playSound`), e os sons que o próprio cliente
+  toca numa entidade (asas do dragão, som de acerto de flecha). O servidor só mexe no envio final de cada som para cada
+  jogador, depois de todas as regras do Bukkit (vanish), então não muda quem ouve o quê.
 - Configuração em `config/akashicmixer.cfg`.
 
 Verificado:
@@ -54,8 +60,12 @@ Verificado:
   o som do próprio jogador ficam presos neles (0,00 bloco em todo frame); um som ao lado de uma entidade continua
   vanilla; o som de uma entidade que morre termina onde ela morreu; sem o "hello" o servidor manda vanilla (AUTOMATED;
   [`evidence/2026-11-03-entity-sounds-smoke.md`](evidence/2026-11-03-entity-sounds-smoke.md));
+- `/playsound` e envios diretos (03/11): com o Mixer no cliente o `/playsound` fica preso no jogador por 66 blocos;
+  sem o Mixer no cliente ele toca no pé do jogador e não no canto do bloco; um som no centro do bloco do jogador (o
+  que o `CraftPlayer.playSound` do Crucible manda) fica preso nele (AUTOMATED; Crucible só conferido no código-fonte;
+  [`evidence/2026-11-03-entity-sounds-playsound.md`](evidence/2026-11-03-entity-sounds-playsound.md));
 - roteamento num cliente de desenvolvimento (02/11): com a Música do Minecraft em 0 os sons roteados tocam no volume
   do canal, mudam ao vivo, ficam mudos ao mutar, e a tela do Mixer com 6 canais cabe em 1280x720 (AUTOMATED;
   [`evidence/2026-11-02-sound-routing-smoke.md`](evidence/2026-11-02-sound-routing-smoke.md)).
 
-Falta: ver no jogo o Menu Cinematic de verdade (0.7.0-alpha.5) com o Mixer; testar no pack Forbidden (com Hodgepodge, Enhanced Sounds e Refresh Sounds), com rádios e telas de verdade, no Windows; e tirar/recolocar o fone de verdade no Windows com o pack completo (Dynamic Surroundings, ArchaicFix, Akashic Voice), incluindo a troca de dispositivo padrão; e o som na entidade num servidor dedicado com ping de verdade, no Windows, no pack (Hodgepodge, Dynamic Surroundings, Sound Physics) e com muitos mobs.
+Falta: ver no jogo o Menu Cinematic de verdade (0.7.0-alpha.5) com o Mixer; testar no pack Forbidden (com Hodgepodge, Enhanced Sounds e Refresh Sounds), com rádios e telas de verdade, no Windows; e tirar/recolocar o fone de verdade no Windows com o pack completo (Dynamic Surroundings, ArchaicFix, Akashic Voice), incluindo a troca de dispositivo padrão; e o som na entidade num servidor dedicado com ping de verdade, no Windows, no pack (Hodgepodge, Dynamic Surroundings, Sound Physics) e com muitos mobs; e num servidor Crucible de verdade, com plugins e jogador em vanish.

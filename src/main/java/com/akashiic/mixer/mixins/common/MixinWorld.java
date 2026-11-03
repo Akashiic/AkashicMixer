@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -13,38 +13,52 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.akashiic.mixer.server.EntitySoundServer;
 
 /**
- * Remembers which entity a server sound belongs to while {@code playSoundAtEntity} / {@code playSoundToNearExcept}
- * runs, so {@link MixinWorldManager} can bind it. Forge's {@code PlaySoundAtEntityEvent} carries the entity too, but
- * it is posted before the sound is sent and the only way to change the send would be to cancel the event, which also
- * skips every other {@code IWorldAccess} and cannot tell the two methods apart (one excludes the player). Server worlds
- * only; nothing changes on the client.
+ * Records whose sound a server world is sending while {@code playSoundAtEntity}, {@code playSoundToNearExcept} or
+ * {@code playSoundEffect} runs, so the final per-player send ({@link MixinNetHandlerPlayServer}) can bind it to its
+ * entity. Nothing about the sound or its listeners changes here. Forge's {@code PlaySoundAtEntityEvent} carries the
+ * entity too, but only for the first two, and it is posted before the send. Server worlds only (Bukkit's
+ * {@code World.playSound} also ends in {@code playSoundEffect}).
  */
 @Mixin(World.class)
 public abstract class MixinWorld {
 
-    @Shadow
-    public boolean isRemote;
+    @Unique
+    private boolean akashicmixer$server() {
+        return !((World) (Object) this).isRemote;
+    }
 
     @Inject(method = "playSoundAtEntity", at = @At("HEAD"))
     private void akashicmixer$enterEntitySound(Entity entity, String sound, float volume, float pitch,
         CallbackInfo ci) {
-        if (!isRemote && entity != null) EntitySoundServer.enter(entity);
+        if (akashicmixer$server()) EntitySoundServer.enterEntitySound(entity);
     }
 
     @Inject(method = "playSoundAtEntity", at = @At("RETURN"))
     private void akashicmixer$exitEntitySound(Entity entity, String sound, float volume, float pitch, CallbackInfo ci) {
-        if (!isRemote && entity != null) EntitySoundServer.exit();
+        if (akashicmixer$server()) EntitySoundServer.exitWorldSound();
     }
 
     @Inject(method = "playSoundToNearExcept", at = @At("HEAD"))
     private void akashicmixer$enterPlayerSound(EntityPlayer player, String sound, float volume, float pitch,
         CallbackInfo ci) {
-        if (!isRemote && player != null) EntitySoundServer.enter(player);
+        if (akashicmixer$server()) EntitySoundServer.enterEntitySound(player);
     }
 
     @Inject(method = "playSoundToNearExcept", at = @At("RETURN"))
     private void akashicmixer$exitPlayerSound(EntityPlayer player, String sound, float volume, float pitch,
         CallbackInfo ci) {
-        if (!isRemote && player != null) EntitySoundServer.exit();
+        if (akashicmixer$server()) EntitySoundServer.exitWorldSound();
+    }
+
+    @Inject(method = "playSoundEffect", at = @At("HEAD"))
+    private void akashicmixer$enterPointSound(double x, double y, double z, String sound, float volume, float pitch,
+        CallbackInfo ci) {
+        if (akashicmixer$server()) EntitySoundServer.enterPointSound((World) (Object) this, x, y, z);
+    }
+
+    @Inject(method = "playSoundEffect", at = @At("RETURN"))
+    private void akashicmixer$exitPointSound(double x, double y, double z, String sound, float volume, float pitch,
+        CallbackInfo ci) {
+        if (akashicmixer$server()) EntitySoundServer.exitWorldSound();
     }
 }

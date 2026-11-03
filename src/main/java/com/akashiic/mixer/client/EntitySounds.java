@@ -10,11 +10,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundManager;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 
 import com.akashiic.mixer.AkashicMixer;
+import com.akashiic.mixer.core.SoundAnchor;
 import com.akashiic.mixer.mixins.client.AccessorSoundHandler;
 import com.akashiic.mixer.mixins.client.AccessorSoundManager;
 import com.akashiic.mixer.net.EntitySoundMessage;
@@ -27,7 +30,8 @@ import paulscode.sound.SoundSystem;
 
 /**
  * Client half of entity-bound sounds. Plays the server's "sound at entity N" ({@link EntitySoundMessage}) and the
- * local player's own client-side sounds as {@link EntityBoundSound}s, says hello to each server so it sends them, and
+ * client's own sounds played exactly at an entity ({@code MixinWorldClient}) as {@link EntityBoundSound}s, says hello
+ * to each server so it sends them, and
  * (with {@code smoothEveryFrame}) moves every playing bound sound each frame to where its entity is drawn: Minecraft
  * moves sounds 20 times a second but the listener every frame, which at flying speed leaves a bound sound jumping up
  * to a block behind or ahead. Client thread.
@@ -59,9 +63,33 @@ public final class EntitySounds {
         }
     }
 
-    /** The local player's own sound ({@code EntityPlayerSP.playSound}), kept on the player. */
-    public static void playOwn(Entity player, String name, float volume, float pitch) {
-        play(new EntityBoundSound(new ResourceLocation(name), player, volume, pitch));
+    /**
+     * A sound the client plays by itself at a point ({@code WorldClient.playSound}): when the point is exactly an
+     * entity's feet, position or eyes, plays it on that entity instead and returns true.
+     */
+    public static boolean playAtEntity(WorldClient world, double x, double y, double z, String name, float volume,
+        float pitch) {
+        if (!enabled || name == null || world == null) return false;
+        Entity entity = null;
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.thePlayer != null && mc.thePlayer.worldObj == world && at(mc.thePlayer, x, y, z)) entity = mc.thePlayer;
+        if (entity == null) {
+            double r = SoundAnchor.SAME_SPOT * 2;
+            List<?> near = world.getEntitiesWithinAABBExcludingEntity(
+                null,
+                AxisAlignedBB.getBoundingBox(x - r, y - 2.0, z - r, x + r, y + r, z + r));
+            for (int i = 0; i < near.size() && entity == null; i++) {
+                Entity candidate = (Entity) near.get(i);
+                if (at(candidate, x, y, z)) entity = candidate;
+            }
+        }
+        if (entity == null) return false;
+        play(new EntityBoundSound(new ResourceLocation(name), entity, volume, pitch));
+        return true;
+    }
+
+    private static boolean at(Entity e, double x, double y, double z) {
+        return SoundAnchor.atEntity(x, y, z, e.posX, e.posY, e.boundingBox.minY, e.posY + e.getEyeHeight(), e.posZ);
     }
 
     private static void play(EntityBoundSound sound) {

@@ -28,6 +28,16 @@
   the automatic GUI scale, 427x240).
 - Dev client smoke test of the routing and the six-row screen on Linux (AUTOMATED),
   `docs/evidence/2026-11-02-sound-routing-smoke.md`.
+- Entity sounds, second pass (owner request, 2026-11-03: "/playsound too, the other old paths, Crucible and
+  plugins"). The server no longer replaces `WorldManager`'s send: it acts on the final per-player
+  `NetHandlerPlayServer.sendPacket` of each sound packet, so Bukkit's rules (vanish, `canSee`) and every sender are
+  kept and covered: world sounds (also Bukkit's `World.playSound`), vanilla `/playsound`, Bukkit's `/playsound`
+  (the one `/playsound` runs on Crucible), plugins' `Player.playSound` (rounded to the block centre by
+  `CraftPlayer`), ProtocolLib. A sound sent straight to a player at that player is bound for mixer clients and, for
+  vanilla clients, moved to the player: fixes `/playsound` without coordinates playing at the block corner. Client:
+  `MixinWorldClient` replaces `MixinEntityPlayerSP` and also keeps on its entity any client sound played exactly at
+  an entity (dragon wings, arrow-hit, mods). Survey of the vanilla sound paths, the Crucible source check and the
+  dev client check: `docs/evidence/2026-11-03-entity-sounds-playsound.md`.
 - Entity sounds (owner request, 2026-11-03: "the sound has to stay on the entity, as in recent versions"). Vanilla
   1.7.10 sends every server sound as a fixed point, so a sound about a moving mob, vehicle or the player who flies on
   is left behind. Now, between a server and a client that both have the mixer:

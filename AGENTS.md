@@ -12,13 +12,18 @@ Scope: this repository. Changes needed in AkashicFM or AkashicWeb are made in th
   sounds an Akashic mod routed to a channel with `AkashicMixerApi.routeSounds`, by sound event id),
   `SoundManager.reloadSoundSystem` (`@Inject` at HEAD: defers a reload while the previous one still loads),
   paulscode `SoundSystem.CommandQueue` (`@Inject` at HEAD: drops commands for an OpenAL library without a context),
-  `EntityPlayerSP.playSound` (`@Inject` at its `World.playSound` call: the local player's own sound stays on the
-  player), and accessors on `SoundHandler`, `SoundManager`, `SoundSystem` and `LibraryLWJGLOpenAL`. Server side:
-  `World.playSoundAtEntity` / `playSoundToNearExcept` (`@Inject` at HEAD and RETURN: remember the entity) and
-  `WorldManager.playSound` / `playSoundToNearExcept` (`@Inject` at HEAD, cancellable: send entity sounds).
-- Entity sounds change only where a sound plays, never its volume, and only between a server and a client that both
-  have the mixer (hello on the `akashicmixer` channel); everyone else gets the exact vanilla packet, to the players
-  vanilla would choose. Bump `MixerNetwork.PROTOCOL` when a message changes.
+  `WorldClient.playSound` (`@Inject` at HEAD, cancellable: a client sound exactly at an entity stays on it), and
+  accessors on `SoundHandler`, `SoundManager`, `SoundSystem` and `LibraryLWJGLOpenAL`. Both sides:
+  `World.playSoundAtEntity` / `playSoundToNearExcept` / `playSoundEffect` (`@Inject` at HEAD and RETURN on server
+  worlds: remember whose sound is being sent), `NetHandlerPlayServer.sendPacket` (`@Inject` at HEAD, cancellable: the
+  final per-player send of `S29PacketSoundEffect`) and an accessor on `S29PacketSoundEffect`.
+- Entity sounds never choose who hears a sound: they act on the final per-player send, after vanilla, Forge, Bukkit
+  (vanish, `canSee`) and plugins chose the players, so Crucible/Thermos keep their rules. A client with the mixer
+  (hello on the `akashicmixer` channel) gets a sound that belongs to an entity bound to it; everyone else gets the
+  vanilla packet, except a sound sent straight to one player at that player (`/playsound`, `Player.playSound`), which
+  is moved from the block corner/centre to the player (the `/playsound` fix). Do not add `@Shadow`s on classes
+  Bukkit patches (Crucible changes `WorldManager.theWorldServer` to public). Bump `MixerNetwork.PROTOCOL` when a
+  message changes.
 - Never call `SoundHandler.onResourceManagerReload` to recover audio: restart the engine with
   `SoundManager.reloadSoundSystem()` (a full resource reload freezes a large pack for seconds).
 - Never touch vanilla categories other than *Music*; never stop a vanilla sound (keep the factor above 0). Sound
