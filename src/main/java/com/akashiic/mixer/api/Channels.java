@@ -12,6 +12,10 @@ public final class Channels {
     public static final String RADIOS = "radios";
     /** AkashicFM: the iPod (item and iPod Player block) and its speakers. */
     public static final String MUSIC = "music";
+    /** Akashic Cinematic Menu: the main menu's background music (routed with {@code routeSounds}). */
+    public static final String MENU_MUSIC = "menu_music";
+    /** Akashic Cinematic Menu: the main menu's interface sounds (focus, select, back, ...). */
+    public static final String MENU_SFX = "menu_sfx";
     /** Reserved for Akashic-Voice. */
     public static final String VOICE = "voice";
 

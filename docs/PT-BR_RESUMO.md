@@ -1,6 +1,6 @@
 # Resumo em português
 
-Atualizado em 2026-10-25. **Primeira versão, sem release, ainda não testada no pack Forbidden.**
+Atualizado em 2026-11-03. **Primeira versão, sem release, ainda não testada no pack Forbidden.**
 
 O AkashicMixer é o núcleo de som dos mods Akashic (AkashicFM e AkashicWeb dependem dele).
 
@@ -24,10 +24,15 @@ O AkashicMixer é o núcleo de som dos mods Akashic (AkashicFM e AkashicWeb depe
   tocando, ou o contrário), o Mixer reinicia o motor de som no dispositivo novo em poucos segundos, e todos os sons do
   Minecraft passam a sair por ele. A música de fundo que estava tocando volta em ~5 s (sem isso o Minecraft esperaria
   10-20 minutos). Opção `sound_engine.followDefaultDevice` (ligada).
+- **Menu Cinematic** (02/11/2026): a música do menu e os sons da interface do Akashic Cinematic Menu ganham os
+  canais **Música do Menu** e **Sons do Menu** no Mixer. O slider **Música** do Minecraft não afeta mais o menu (o
+  **Master** continua valendo). Funciona por uma API nova, `routeSounds`: um mod Akashic entrega os sons do próprio
+  `sounds.json` a um canal; sons `minecraft:` nunca podem ser roteados. A tela do Mixer se ajusta (linhas mais
+  justas ou duas colunas) para caber em 1280x720.
 - Configuração em `config/akashicmixer.cfg`.
 
 Verificado:
-- compila (BUILD) e os testes unitários passam (AUTOMATED, Linux);
+- compila (BUILD) e os 49 testes unitários passam (AUTOMATED, Linux);
 - num cliente de desenvolvimento do Minecraft (Linux, sem outros mods): o botão aparece no primeiro espaço livre, abre o mixer, a música do Minecraft some em ~3,5 s sem ser parada e volta depois (AUTOMATED; [`evidence/2026-10-18-dev-client-smoke.md`](evidence/2026-10-18-dev-client-smoke.md));
 - AkashicFM e AkashicWeb compilam com ele e os testes deles passam;
 - perda de dispositivo de áudio, num cliente de desenvolvimento (Linux, dispositivo desligado e religado pela
@@ -38,6 +43,9 @@ Verificado:
 - seguir o dispositivo padrão: em 30 s de jogo normal nenhum reinício (cada verificação leva menos de 1 ms); uma
   troca de padrão simulada reinicia uma vez, assenta no dispositivo novo e a música volta (AUTOMATED, Linux; a troca
   foi simulada porque o cliente de teste só tem um dispositivo;
-  [`evidence/2026-10-25-follow-default-device.md`](evidence/2026-10-25-follow-default-device.md)).
+  [`evidence/2026-10-25-follow-default-device.md`](evidence/2026-10-25-follow-default-device.md));
+- roteamento num cliente de desenvolvimento (02/11): com a Música do Minecraft em 0 os sons roteados tocam no volume
+  do canal, mudam ao vivo, ficam mudos ao mutar, e a tela do Mixer com 6 canais cabe em 1280x720 (AUTOMATED;
+  [`evidence/2026-11-02-sound-routing-smoke.md`](evidence/2026-11-02-sound-routing-smoke.md)).
 
-Falta: testar no pack Forbidden (com Hodgepodge, Enhanced Sounds e Refresh Sounds), com rádios e telas de verdade, no Windows; e tirar/recolocar o fone de verdade no Windows com o pack completo (Dynamic Surroundings, ArchaicFix, Akashic Voice), incluindo a troca de dispositivo padrão.
+Falta: ver no jogo o Menu Cinematic de verdade (0.7.0-alpha.5) com o Mixer; testar no pack Forbidden (com Hodgepodge, Enhanced Sounds e Refresh Sounds), com rádios e telas de verdade, no Windows; e tirar/recolocar o fone de verdade no Windows com o pack completo (Dynamic Surroundings, ArchaicFix, Akashic Voice), incluindo a troca de dispositivo padrão.

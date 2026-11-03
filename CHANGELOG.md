@@ -18,6 +18,19 @@
   Windows switches its default output, the engine restarts on the new device, so every Minecraft sound plays there;
   background music that was playing comes back within 5 s instead of after vanilla's 10-20 minute pause. API:
   `AkashicMixerApi.followsDefaultDevice()` (additive). Evidence: `docs/evidence/2026-10-25-follow-default-device.md`.
+- Sound routing (owner request, 2026-11-02): `AkashicMixerApi.routeSounds(domain, pathPrefix, channel)` hands an
+  Akashic mod's own `sounds.json` events to a mixer channel; the mixin applies the channel level in place of the
+  Minecraft category slider and leaves them out of the music fade. `minecraft:` sounds cannot be routed. API version
+  stays 1 (additive).
+- Well-known channels `menu_music` (**Menu Music**) and `menu_sfx` (**Menu Sounds**) for the Akashic Cinematic Menu,
+  with English and Brazilian Portuguese names.
+- The mixer screen gets tighter rows, then two columns, when the channels do not fit (6 rows overflowed 1280x720 at
+  the automatic GUI scale, 427x240).
+- Dev client smoke test of the routing and the six-row screen on Linux (AUTOMATED),
+  `docs/evidence/2026-11-02-sound-routing-smoke.md`.
+- One branch again (owner report, 2026-11-03): the Cinematic Menu build (`0ff47b7`) had been cut from `c60f79e`, so
+  its jar lacked the audio device fixes of `08b49cd` and `c69316d`. Both series merged; the routing and the reload
+  gate share `MixinSoundManager`.
 
 - First version (owner request, 2026-10-18): the Akashic Sounds Mixer.
   - Channel API (`AkashicMixerApi`, version 1): master slider, per-channel volume and mute, well-known ids

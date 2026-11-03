@@ -2,6 +2,7 @@ package com.akashiic.mixer.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -66,5 +67,14 @@ class AkashicMixerApiTest {
             AkashicMixerApi.setRecoversSoundEngine(false);
             AkashicMixerApi.setFollowsDefaultDevice(false);
         }
+    }
+
+    @Test
+    void routedSoundsFindTheirChannel() {
+        MixerChannel ch = AkashicMixerApi.register("test-route", 1);
+        AkashicMixerApi.routeSounds("testroutemod", "ui.", ch);
+        assertSame(ch, AkashicMixerApi.routedChannel("testroutemod", "ui.focus"));
+        assertNull(AkashicMixerApi.routedChannel("testroutemod", "bgm.menu"));
+        assertThrows(IllegalArgumentException.class, () -> AkashicMixerApi.routeSounds("minecraft", "", ch));
     }
 }

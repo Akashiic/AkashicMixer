@@ -9,12 +9,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.akashiic.mixer.core.AudibleBoard;
+import com.akashiic.mixer.core.SoundRoutes;
 
 /**
  * Entry point for the Akashic mods. Call {@link #register} from your client pre-init (the mixer pre-inits first, as a
  * required dependency), keep the returned channel, and read {@link MixerChannel#level()} where you used to read the
  * Minecraft Records level. Every client tick, report how loud your audio is at the listener with
  * {@link #reportAudible}: that is what fades Minecraft's music out near radios, speakers and screens.
+ * <p>
+ * A mod that plays its sounds through Minecraft's own sound handler ({@code sounds.json} events) can instead hand them
+ * to a channel with {@link #routeSounds}: the mixer then applies the channel level in place of the Minecraft category
+ * slider, so those sounds leave the vanilla Music and Sounds sliders (Minecraft's Master still applies).
  * <p>
  * Pure Java, safe to class-load on a dedicated server (nothing is persisted or played there).
  */
@@ -33,6 +38,7 @@ public final class AkashicMixerApi {
     private static final AudibleBoard AUDIBLE = new AudibleBoard();
     private static volatile boolean recoversSoundEngine;
     private static volatile boolean followsDefaultDevice;
+    private static final SoundRoutes<MixerChannel> ROUTES = new SoundRoutes<>();
 
     private AkashicMixerApi() {}
 
@@ -115,6 +121,29 @@ public final class AkashicMixerApi {
     /** Mixer internals. */
     public static void setFollowsDefaultDevice(boolean value) {
         followsDefaultDevice = value;
+    }
+
+    /**
+     * Puts the sounds {@code domain:<pathPrefix>...} that the calling mod plays through Minecraft's sound handler under
+     * {@code channel}: their volume becomes sound volume x {@code channel.level()} instead of sound volume x the
+     * Minecraft category slider of their {@code sounds.json} category, and they are left out of the music fade. A
+     * level of 0 (channel or Akashic master muted) makes Minecraft skip the sound when it starts; stop your own
+     * long-running sounds when {@link MixerChannel#level()} is 0. The longest matching prefix wins; an empty prefix
+     * takes the whole domain. Call it from client pre-init, after {@link #register}.
+     *
+     * @return false when this (domain, prefix) was already routed (the first route is kept)
+     * @throws IllegalArgumentException for the {@code minecraft} domain (vanilla sounds stay under vanilla sliders),
+     *                                  an empty domain or a null prefix or channel
+     * @since API 1, added after the first mixer build ({@code bab631d}); a mod that must also run with that build
+     *        probes for this method before registering
+     */
+    public static boolean routeSounds(String domain, String pathPrefix, MixerChannel channel) {
+        return ROUTES.add(domain, pathPrefix, channel);
+    }
+
+    /** The channel a sound event {@code domain:path} is routed to, or null (the mixin reads this). */
+    public static MixerChannel routedChannel(String domain, String path) {
+        return ROUTES.find(domain, path);
     }
 
     /** Mixer internals: told about each new channel (config binding). */
