@@ -35,6 +35,14 @@ depend on it.
 - **Sound follows Windows' default output.** Turning a headset on while the speakers play (or back) moves every
   Minecraft sound to the new default device within a few seconds; background music that was playing resumes.
 
+- **Sounds stay on their entity.** In vanilla 1.7.10 the server sends every sound as a fixed point: where the mob,
+  vehicle or player was when it played. Flying fast, your own sounds (bow, eating, items, modded tools) start behind
+  you and stay there; a running mob's sounds stay where it started. With the mixer on the server and on the client,
+  a sound that belongs to an entity (vanilla's `playSoundAtEntity`, or a mod's sound played exactly at an entity) is
+  sent as "sound at entity N" and the client keeps it on the entity, as current Minecraft does with its entity-bound
+  sounds, and moves it every frame. The local player's own client sounds stay on the player too. Players without
+  the mixer, and servers without it, keep vanilla sounds. Config `entity_sounds`.
+
 Settings live in `config/akashicmixer.cfg` (written when the mixer screen closes).
 
 ## For mod authors (API, version 1)
@@ -80,6 +88,7 @@ Dependency: `com.github.Akashiic:AkashicMixer:<commit>:dev` from JitPack (`https
 | One reload at a time (`@Inject` at HEAD of `SoundManager.reloadSoundSystem`), crash guard (`@Inject` at HEAD of paulscode `SoundSystem.CommandQueue`), engine watchdog, default-device following, music resume | `mixins/client/MixinSoundManager`, `mixins/client/MixinSoundSystem`, `client/SoundEngineWatchdog`, `client/OpenAlEngine`, `client/MusicResume`, `core/ReloadGate`, `core/EngineRecovery`, `core/DefaultDeviceFollower` |
 | Sound routing: route table (pure) and, in the same `@Inject`, the channel level in place of the category slider for routed sounds | `core/SoundRoutes`, `mixins/client/MixinSoundManager` |
 | Mixer screen layout: vanilla-like, tighter or two columns so every channel fits a 427x240 screen (pure, unit-tested) | `core/MixerLayout`, `client/GuiAkashicMixer` |
+| Entity sounds: server side, the entity of `playSoundAtEntity` and the replacement of `WorldManager`'s send (bound packet for mixer clients, vanilla packet for others); client side, the bound sound, per-frame placement and hello | `mixins/common/MixinWorld`, `mixins/common/MixinWorldManager`, `server/EntitySoundServer`, `net/`, `client/EntitySounds`, `client/EntityBoundSound`, `mixins/client/MixinEntityPlayerSP`, `core/SoundAnchor` |
 | Options button, mixer screen, config | `client/` |
 
 ## Build

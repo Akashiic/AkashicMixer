@@ -28,6 +28,19 @@
   the automatic GUI scale, 427x240).
 - Dev client smoke test of the routing and the six-row screen on Linux (AUTOMATED),
   `docs/evidence/2026-11-02-sound-routing-smoke.md`.
+- Entity sounds (owner request, 2026-11-03: "the sound has to stay on the entity, as in recent versions"). Vanilla
+  1.7.10 sends every server sound as a fixed point, so a sound about a moving mob, vehicle or the player who flies on
+  is left behind. Now, between a server and a client that both have the mixer:
+  - the server sends a sound that belongs to an entity (`playSoundAtEntity`, `playSoundToNearExcept`, or with
+    `matchByPosition` a `playSoundEffect` at an entity's exact coordinates) as "sound at entity N" on the
+    `akashicmixer` channel, after the client's hello; players without the mixer get the vanilla packet, to the same
+    players;
+  - the client plays it on the entity (`EntityBoundSound`, as current Minecraft's `EntityBoundSoundInstance`) and
+    moves it every frame to where the entity is drawn (`smoothEveryFrame`); a sound whose entity dies finishes where
+    the entity was;
+  - the local player's own client sounds (`EntityPlayerSP.playSound`) stay on the player.
+  Config `entity_sounds` (`enabled`, `matchByPosition`, `smoothEveryFrame`), read by both sides. Research:
+  `docs/research/2026-11-03-sounds-left-behind.md`.
 - One branch again (owner report, 2026-11-03): the Cinematic Menu build (`0ff47b7`) had been cut from `c60f79e`, so
   its jar lacked the audio device fixes of `08b49cd` and `c69316d`. Both series merged; the routing and the reload
   gate share `MixinSoundManager`.

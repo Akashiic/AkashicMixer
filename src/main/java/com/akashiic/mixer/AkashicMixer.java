@@ -13,8 +13,9 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
  * music, ...) that live outside Minecraft's sound categories, and it fades Minecraft's own background music out while
  * Akashic audio is audible. AkashicFM and AkashicWeb depend on it ({@code required-after:akashicmixer}).
  * <p>
- * Client-side only in practice: on a dedicated server the API answers with defaults and nothing else runs. The mod is
- * not needed on the other side of a connection ({@code acceptableRemoteVersions = "*"}).
+ * Mostly client side. On a server (dedicated or integrated) it only sends sounds that belong to an entity as entity
+ * sounds to clients that have the mixer; the API answers with defaults there. The mod is not needed on the other side
+ * of a connection ({@code acceptableRemoteVersions = "*"}): without it on both sides, sounds stay vanilla.
  */
 @Mod(
     modid = AkashicMixer.MODID,

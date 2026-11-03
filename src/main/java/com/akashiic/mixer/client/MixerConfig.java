@@ -1,7 +1,5 @@
 package com.akashiic.mixer.client;
 
-import java.io.File;
-
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
@@ -36,9 +34,9 @@ public final class MixerConfig {
 
     private MixerConfig() {}
 
-    static void load(File file) {
-        config = new Configuration(file);
-        config.load();
+    /** The file {@code CommonConfig} opened (one Configuration per file, or saves overwrite each other). */
+    static void load(Configuration file) {
+        config = file;
         config.setCategoryComment(CHANNELS, "Akashic Sounds Mixer channels: volume 0-100 and mute, per channel.");
         config.setCategoryComment(
             MUSIC,

@@ -5,12 +5,16 @@
   "refmap": "mixins.akashicmixer.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [],
+  "mixins": [
+    "common.MixinWorld",
+    "common.MixinWorldManager"
+  ],
   "client": [
     "client.AccessorLibraryLWJGLOpenAL",
     "client.AccessorSoundHandler",
     "client.AccessorSoundManager",
     "client.AccessorSoundSystem",
+    "client.MixinEntityPlayerSP",
     "client.MixinSoundManager",
     "client.MixinSoundSystem"
   ],
