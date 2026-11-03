@@ -49,3 +49,8 @@ Verificado:
   [`evidence/2026-11-02-sound-routing-smoke.md`](evidence/2026-11-02-sound-routing-smoke.md)).
 
 Falta: ver no jogo o Menu Cinematic de verdade (0.7.0-alpha.5) com o Mixer; testar no pack Forbidden (com Hodgepodge, Enhanced Sounds e Refresh Sounds), com rádios e telas de verdade, no Windows; e tirar/recolocar o fone de verdade no Windows com o pack completo (Dynamic Surroundings, ArchaicFix, Akashic Voice), incluindo a troca de dispositivo padrão.
+
+Em estudo (03/11): o som que "fica para trás" quando se voa rápido. O Minecraft atual também deixa a maioria dos sons
+no ponto onde começaram; o que mudou é mais estreito (alguns sons do próprio jogador tocam na hora no cliente, alguns
+sons seguem a entidade). Opções e perguntas em
+[`research/2026-11-03-sounds-left-behind.md`](research/2026-11-03-sounds-left-behind.md). Nada foi implementado ainda.

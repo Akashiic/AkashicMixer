@@ -34,3 +34,6 @@ Last update: 2026-11-03. Status: **first version, not released, not observed in 
 - A real Windows default-device switch (and how long device enumeration takes with Bluetooth devices) is not
   observed; the dev client has a single device.
 - Cinematic Menu routing (2026-11-02): in-game check with AkashicCinematicMenu 0.7.0-alpha.5 (its OI-17).
+- Sounds left behind when flying fast (owner question, 2026-11-03): studied, not built. Current Minecraft also keeps
+  one-shot sounds at their start point; the options and open questions are in
+  [`research/2026-11-03-sounds-left-behind.md`](research/2026-11-03-sounds-left-behind.md).
