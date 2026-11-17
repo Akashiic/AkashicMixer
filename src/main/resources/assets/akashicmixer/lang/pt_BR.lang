@@ -11,4 +11,6 @@ akashicmixer.channel.master=Akashic (tudo)
 akashicmixer.channel.screens=Monitores Web
 akashicmixer.channel.radios=Rádios
 akashicmixer.channel.music=Músicas (iPod)
+akashicmixer.channel.menu_music=Música do Menu
+akashicmixer.channel.menu_sfx=Sons do Menu
 akashicmixer.channel.voice=Voz
