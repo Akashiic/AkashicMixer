@@ -93,3 +93,18 @@ J /playsound, client without the mixer: sound=PositionedSoundRecord source=(685.
   real ping, Windows, the Forbidden pack.
 - `/playsound` with relative offsets (`~ ~1 ~`) keeps vanilla's meaning (relative to the block corner), and a fixed
   point; only the no-offset form is "at the player".
+
+## 5. Absurd speeds (2026-11-19, AUTOMATED, Linux dev client, integrated server)
+
+Owner question: "are sounds still static while moving? Flying at an absurd speed, the sound must be heard live."
+Code at `dfd5272` (the merge of this work), the same setup and a temporary harness (deleted, never committed); the
+player is moved 5 and 20 blocks per tick.
+
+| Scenario | Observed | Result |
+|---|---|---|
+| `/playsound records.cat <player>` at 100 blocks/s | on the player over 225 blocks; per frame (126 frames) mean 0.000, max 0.000 | pass |
+| `/playsound` at 400 blocks/s | on the player over 900 blocks; per frame (173 frames) mean 0.000, max 0.000 | pass |
+| Server `playSoundAtEntity(player)` at 400 blocks/s | on the player over 900 blocks; per frame (178 frames) mean 0.000 | pass |
+| Control: a block sound at a fixed spot (`playSoundEffect` at a block, not at an entity) at 400 blocks/s | stays at the block: 40.8 blocks behind 2 ticks after it started, 940 blocks behind 2.4 s later | as designed (a block does not move) |
+
+Requires the mixer on the server too: a server with an older mixer, or none, sends vanilla points.
